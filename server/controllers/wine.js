@@ -4,6 +4,7 @@ const { findById } = require('../services/wine');
 const list = (req, res) =>
   wine.findAll({
     attributes: [
+      'id',
       'top100Rank',
       'score',
       'winery',
