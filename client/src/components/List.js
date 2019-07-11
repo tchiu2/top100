@@ -1,8 +1,5 @@
 import React, { Component } from 'react';
 import {
-  majorScale,
-  Heading,
-  Pane,
   Popover,
   Position,
   Table,
@@ -117,24 +114,16 @@ class List extends Component {
 
   render() {
     return (
-      <Pane
-        margin={majorScale(2)}
-        height="95vh"
+      <Table
+        width="100%"
+        border="default"
+        onScroll={this.handleScroll}
       >
-        <Heading
-          size={900}
-          textAlign="left"
-          marginBottom={majorScale(2)}
-        >
-          Wine Spectator's Top 100
-        </Heading>
-        <Table onScroll={this.handleScroll}>
-          {this.renderHeaders()}
-          <Table.Body height="85vh">
-            {this.renderTableRows()}
-          </Table.Body>
-        </Table>
-      </Pane>
+        {this.renderHeaders()}
+        <Table.Body height="85vh">
+          {this.renderTableRows()}
+        </Table.Body>
+      </Table>
     );
   }
 }
