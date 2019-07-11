@@ -19,18 +19,28 @@ class Notes extends Component {
 
   render() { 
     const { note } = this.state;
-    const { wine, winery, vintage } = this.props;
+    const {
+      wine,
+      winery,
+      vintage,
+      region,
+      country,
+    } = this.props;
 
     return (
       <Pane
         width={720}
-        display="flex"
         padding={majorScale(2)}
+        display="flex"
+        flexDirection="column"
         flexWrap="wrap"
       >
         <Heading>
-          {winery} - {wine} ({vintage})
+          {vintage} {wine}, {winery}
         </Heading>
+        <Text color="muted" size={400}>
+          {region}, {country}
+        </Text>
         <Text dangerouslySetInnerHTML={{ __html: note }} />
       </Pane>
     );

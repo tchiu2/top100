@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {
   majorScale,
+  Heading,
   Pane,
   Popover,
   Position,
@@ -41,33 +42,44 @@ class List extends Component {
     }
   };
 
-  render() {
-    const headers = (
-      <Table.Head>
-        <Table.TextHeaderCell>Rank</Table.TextHeaderCell>
-        <Table.TextHeaderCell>Score</Table.TextHeaderCell>
-        <Table.TextHeaderCell>Winery</Table.TextHeaderCell>
-        <Table.TextHeaderCell>Wine</Table.TextHeaderCell>
-        <Table.TextHeaderCell>Vintage</Table.TextHeaderCell>
-        <Table.TextHeaderCell>Color</Table.TextHeaderCell>
-        <Table.TextHeaderCell>Country</Table.TextHeaderCell>
-        <Table.TextHeaderCell>Region</Table.TextHeaderCell>
-      </Table.Head>
-    );
-    const rows = this.state.wines.map(wine => (
+  renderHeaders = () =>
+    <Table.Head>
+      <Table.TextHeaderCell textAlign="right">Rank</Table.TextHeaderCell>
+      <Table.TextHeaderCell
+        textAlign="right"
+        flexBasis={10}
+        flexShrink={0}
+        flexGrow={1}
+      >
+        Score
+      </Table.TextHeaderCell>
+      <Table.TextHeaderCell
+        flexBasis={200}
+        flexShrink={0}
+        flexGrow={1}
+      >
+        Winery
+      </Table.TextHeaderCell>
+      <Table.TextHeaderCell
+        flexBasis={200}
+        flexShrink={0}
+        flexGrow={1}
+      >
+        Wine
+      </Table.TextHeaderCell>
+      <Table.TextHeaderCell textAlign="left">Vintage</Table.TextHeaderCell>
+      <Table.TextHeaderCell textAlign="left">Color</Table.TextHeaderCell>
+      <Table.TextHeaderCell textAlign="left">Country</Table.TextHeaderCell>
+      <Table.TextHeaderCell textAlign="left">Region</Table.TextHeaderCell>
+    </Table.Head>
+
+    renderTableRows = () => this.state.wines.map(wine => (
       <Popover
         isShown={wine.id === this.state.shown}
         key={wine.id}
         trigger="hover"
         position={Position.BOTTOM}
-        content={() => (
-          <Notes
-            id={wine.id}
-            winery={wine.winery}
-            wine={wine.wine}
-            vintage={wine.vintage}
-          />
-        )}
+        content={() => <Notes {...wine} />}
       >
         <Table.Row
           data-id={wine.id}
@@ -75,26 +87,55 @@ class List extends Component {
           onMouseOver={this.handleMouseOver(wine.id)}
           onMouseLeave={this.handleMouseLeave(wine.id)}
         >
-          <Table.TextCell>{wine.top100Rank}</Table.TextCell>
-          <Table.TextCell>{wine.score}</Table.TextCell>
-          <Table.TextCell>{wine.winery}</Table.TextCell>
-          <Table.TextCell>{wine.wine}</Table.TextCell>
-          <Table.TextCell>{wine.vintage}</Table.TextCell>
-          <Table.TextCell>{wine.color}</Table.TextCell>
-          <Table.TextCell>{wine.country}</Table.TextCell>
-          <Table.TextCell>{wine.region}</Table.TextCell>
+          <Table.TextCell textAlign="right">{wine.top100Rank}</Table.TextCell>
+          <Table.TextCell
+            textAlign="right"
+            flexBasis={10}
+            flexShrink={0}
+            flexGrow={1}
+          >
+            {wine.score}
+          </Table.TextCell>
+          <Table.TextCell
+            flexBasis={200}
+            flexShrink={0}
+            flexGrow={1}
+            textAlign="left"
+          >
+            {wine.winery}
+          </Table.TextCell>
+          <Table.TextCell
+            flexBasis={200}
+            flexShrink={0}
+            flexGrow={1}
+            textAlign="left"
+          >
+            {wine.wine}
+          </Table.TextCell>
+          <Table.TextCell textAlign="left">{wine.vintage}</Table.TextCell>
+          <Table.TextCell textAlign="left">{wine.color}</Table.TextCell>
+          <Table.TextCell textAlign="left">{wine.country}</Table.TextCell>
+          <Table.TextCell textAlign="left">{wine.region}</Table.TextCell>
         </Table.Row>
       </Popover>
     ));
 
+  render() {
     return (
       <Pane
         margin={majorScale(2)}
       >
+        <Heading
+          size={900}
+          textAlign="left"
+          marginBottom={majorScale(2)}
+        >
+          Wine Spectator's Top 100
+        </Heading>
         <Table>
-          {headers}
-          <Table.Body height={640}>
-            {rows}
+          {this.renderHeaders()}
+          <Table.Body height={840}>
+            {this.renderTableRows()}
           </Table.Body>
         </Table>
       </Pane>
