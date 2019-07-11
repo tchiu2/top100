@@ -14,7 +14,7 @@ const cellSizes = {
   large: 6,
 };
 
-const TableCell = (isHeader, size, textAlign = 'center') => props => {
+const TableCell = (isHeader, size, textAlign = 'center') => ({ children, ... props }) => {
   const Cell = isHeader ? Table.TextHeaderCell : Table.TextCell;
 
   return (
@@ -23,7 +23,7 @@ const TableCell = (isHeader, size, textAlign = 'center') => props => {
       textAlign={textAlign}
       {...props}
     >
-      {props.children}
+      {children}
     </Cell>
   );
 };
@@ -51,27 +51,24 @@ class List extends Component {
       .then(wines => this.setState({ wines }));
   };
 
-  debouncedMouseOver = debounce((e, id) => {
+  debouncedMouseOver = debounce(id => {
     this.setState({ shown: id });
   }, 250);
 
   throttledScroll = throttle(() => {
     console.log("scroll")
     this.setState({ shown: null });
-  }, 240);
+  }, 250);
 
   handleMouseOver = id => e => {
-    e.persist();
-    this.debouncedMouseOver(e, id);
+    this.debouncedMouseOver(id);
   };
 
   handleMouseLeave = e => {
-    e.persist();
-    this.debouncedMouseOver(e, null);
+    this.debouncedMouseOver(null);
   };
 
   handleScroll = e => {
-    e.persist();
     this.throttledScroll();
   };
 
@@ -87,31 +84,31 @@ class List extends Component {
       <MediumHeaderCell>Region</MediumHeaderCell>
     </Table.Head>
 
-    renderTableRows = () => this.state.wines.map(wine => (
-      <Popover
-        isShown={wine.id === this.state.shown}
-        key={wine.id}
-        trigger="hover"
-        position={Position.BOTTOM}
-        content={() => <Notes {...wine} />}
+  renderTableRows = () => this.state.wines.map(wine => (
+    <Popover
+      isShown={wine.id === this.state.shown}
+      key={wine.id}
+      trigger="hover"
+      position={Position.BOTTOM}
+      content={() => <Notes {...wine} />}
+    >
+      <Table.Row
+        cursor="pointer"
+        isHighlighted={this.state.shown === wine.id}
+        onMouseOver={this.handleMouseOver(wine.id)}
+        onMouseLeave={this.handleMouseLeave}
       >
-        <Table.Row
-          cursor="pointer"
-          isHighlighted={this.state.shown === wine.id}
-          onMouseOver={this.handleMouseOver(wine.id)}
-          onMouseLeave={this.handleMouseLeave}
-        >
-          <SmallBodyCell>{wine.top100Rank}</SmallBodyCell>
-          <MediumBodyCell>{wine.winery}</MediumBodyCell>
-          <LargeBodyCell>{wine.wine}</LargeBodyCell>
-          <SmallBodyCell>{wine.vintage}</SmallBodyCell>
-          <SmallBodyCell>{wine.score}</SmallBodyCell>
-          <SmallBodyCell>{wine.color}</SmallBodyCell>
-          <MediumBodyCell>{wine.country}</MediumBodyCell>
-          <MediumBodyCell>{wine.region}</MediumBodyCell>
-        </Table.Row>
-      </Popover>
-    ));
+        <SmallBodyCell>{wine.top100Rank}</SmallBodyCell>
+        <MediumBodyCell>{wine.winery}</MediumBodyCell>
+        <LargeBodyCell>{wine.wine}</LargeBodyCell>
+        <SmallBodyCell>{wine.vintage}</SmallBodyCell>
+        <SmallBodyCell>{wine.score}</SmallBodyCell>
+        <SmallBodyCell>{wine.color}</SmallBodyCell>
+        <MediumBodyCell>{wine.country}</MediumBodyCell>
+        <MediumBodyCell>{wine.region}</MediumBodyCell>
+      </Table.Row>
+    </Popover>
+  ));
 
   render() {
     return (
