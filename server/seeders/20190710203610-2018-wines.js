@@ -7,7 +7,7 @@ const wines = raw.map(wine => ({
   wine: wine.wine_full,
   vintage: wine.vintage,
   note: wine.note,
-  tasterInitials: wine.taster_intials,
+  tasterInitials: wine.taster_initials,
   color: wine.color,
   country: wine.country,
   region: wine.region,

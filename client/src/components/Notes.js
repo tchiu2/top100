@@ -9,16 +9,17 @@ import {
 class Notes extends Component {
   state = {
     note: '',
+    tasterInitials: '',
   };
 
   componentDidMount() {
     fetch(`/api/note/${this.props.id}`)
       .then(res => res.json())
-      .then(({ note }) => this.setState({ note }));
+      .then(({ note, tasterInitials }) => this.setState({ note, tasterInitials }));
   }
 
   render() { 
-    const { note } = this.state;
+    const { note, tasterInitials } = this.state;
     const {
       wine,
       winery,
@@ -41,7 +42,7 @@ class Notes extends Component {
         <Text color="muted" size={400}>
           {region}, {country}
         </Text>
-        <Text dangerouslySetInnerHTML={{ __html: note }} />
+        <Text dangerouslySetInnerHTML={{ __html: `${note} <i>-${tasterInitials}</i>` }} />
       </Pane>
     );
   }

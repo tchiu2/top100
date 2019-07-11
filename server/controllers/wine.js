@@ -13,6 +13,7 @@ const list = (req, res) =>
       'color',
       'country',
       'region',
+      'price',
     ],
     order: [
       ['top100Rank', 'ASC'],

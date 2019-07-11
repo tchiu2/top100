@@ -11,6 +11,33 @@ import _ from 'lodash';
 
 import Notes from './Notes';
 
+const cellSizes = {
+  small: 1,
+  medium: 3,
+  large: 6,
+};
+
+const TableCell = (isHeader, size, textAlign = 'center') => props => {
+  const Cell = isHeader ? Table.TextHeaderCell : Table.TextCell;
+
+  return (
+    <Cell
+      flex={size}
+      textAlign={textAlign}
+      {...props}
+    >
+      {props.children}
+    </Cell>
+  );
+};
+
+const SmallHeaderCell = TableCell(true, cellSizes.small);
+const MediumHeaderCell = TableCell(true, cellSizes.medium, 'left');
+const LargeHeaderCell = TableCell(true, cellSizes.large, 'left');
+const SmallBodyCell = TableCell(false, cellSizes.small);
+const MediumBodyCell = TableCell(false, cellSizes.medium, 'left');
+const LargeBodyCell = TableCell(false, cellSizes.large, 'left');
+
 class List extends Component {
   state = {
     wines: [],
@@ -29,48 +56,37 @@ class List extends Component {
 
   debouncedMouseOver = _.debounce((e, id) => {
     this.setState({ shown: id });
-  }, 300);
+  }, 250);
+
+  throttledScroll = _.throttle(() => {
+    this.setState({ shown: null });
+  }, 240);
 
   handleMouseOver = id => e => {
     e.persist();
     this.debouncedMouseOver(e, id);
   };
 
-  handleMouseLeave = id => e => {
-    if (id !== this.state.shown) {
-      this.setState({ shown: null });
-    }
+  handleMouseLeave = e => {
+    e.persist();
+    this.debouncedMouseOver(e, null);
+  };
+
+  handleScroll = e => {
+    e.persist();
+    this.throttledScroll();
   };
 
   renderHeaders = () =>
     <Table.Head>
-      <Table.TextHeaderCell textAlign="right">Rank</Table.TextHeaderCell>
-      <Table.TextHeaderCell
-        textAlign="right"
-        flexBasis={10}
-        flexShrink={0}
-        flexGrow={1}
-      >
-        Score
-      </Table.TextHeaderCell>
-      <Table.TextHeaderCell
-        flexBasis={200}
-        flexShrink={0}
-        flexGrow={1}
-      >
-        Winery
-      </Table.TextHeaderCell>
-      <Table.TextHeaderCell
-        flexBasis={200}
-        flexShrink={0}
-        flexGrow={1}
-      >
-        Wine
-      </Table.TextHeaderCell>
-      <Table.TextHeaderCell textAlign="left">Vintage</Table.TextHeaderCell>
-      <Table.TextHeaderCell textAlign="left">Color</Table.TextHeaderCell>
-      <Table.TextHeaderCell textAlign="left">Country</Table.TextHeaderCell>
-      <Table.TextHeaderCell textAlign="left">Region</Table.TextHeaderCell>
+      <SmallHeaderCell>Rank</SmallHeaderCell>
+      <MediumHeaderCell>Winery</MediumHeaderCell>
+      <LargeHeaderCell>Wine</LargeHeaderCell>
+      <SmallHeaderCell>Vintage</SmallHeaderCell>
+      <SmallHeaderCell>Score</SmallHeaderCell>
+      <SmallHeaderCell>Color</SmallHeaderCell>
+      <MediumHeaderCell>Country</MediumHeaderCell>
+      <MediumHeaderCell>Region</MediumHeaderCell>
     </Table.Head>
 
     renderTableRows = () => this.state.wines.map(wine => (
@@ -82,40 +98,19 @@ class List extends Component {
         content={() => <Notes {...wine} />}
       >
         <Table.Row
-          data-id={wine.id}
-          isSelectable
+          cursor="pointer"
+          isHighlighted={this.state.shown === wine.id}
           onMouseOver={this.handleMouseOver(wine.id)}
-          onMouseLeave={this.handleMouseLeave(wine.id)}
+          onMouseLeave={this.handleMouseLeave}
         >
-          <Table.TextCell textAlign="right">{wine.top100Rank}</Table.TextCell>
-          <Table.TextCell
-            textAlign="right"
-            flexBasis={10}
-            flexShrink={0}
-            flexGrow={1}
-          >
-            {wine.score}
-          </Table.TextCell>
-          <Table.TextCell
-            flexBasis={200}
-            flexShrink={0}
-            flexGrow={1}
-            textAlign="left"
-          >
-            {wine.winery}
-          </Table.TextCell>
-          <Table.TextCell
-            flexBasis={200}
-            flexShrink={0}
-            flexGrow={1}
-            textAlign="left"
-          >
-            {wine.wine}
-          </Table.TextCell>
-          <Table.TextCell textAlign="left">{wine.vintage}</Table.TextCell>
-          <Table.TextCell textAlign="left">{wine.color}</Table.TextCell>
-          <Table.TextCell textAlign="left">{wine.country}</Table.TextCell>
-          <Table.TextCell textAlign="left">{wine.region}</Table.TextCell>
+          <SmallBodyCell>{wine.top100Rank}</SmallBodyCell>
+          <MediumBodyCell>{wine.winery}</MediumBodyCell>
+          <LargeBodyCell>{wine.wine}</LargeBodyCell>
+          <SmallBodyCell>{wine.vintage}</SmallBodyCell>
+          <SmallBodyCell>{wine.score}</SmallBodyCell>
+          <SmallBodyCell>{wine.color}</SmallBodyCell>
+          <MediumBodyCell>{wine.country}</MediumBodyCell>
+          <MediumBodyCell>{wine.region}</MediumBodyCell>
         </Table.Row>
       </Popover>
     ));
@@ -124,6 +119,7 @@ class List extends Component {
     return (
       <Pane
         margin={majorScale(2)}
+        height="95vh"
       >
         <Heading
           size={900}
@@ -132,9 +128,9 @@ class List extends Component {
         >
           Wine Spectator's Top 100
         </Heading>
-        <Table>
+        <Table onScroll={this.handleScroll}>
           {this.renderHeaders()}
-          <Table.Body height={840}>
+          <Table.Body height="85vh">
             {this.renderTableRows()}
           </Table.Body>
         </Table>
