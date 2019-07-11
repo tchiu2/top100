@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Top 100",
+  "name": "Wine Spectator's Top 100",
   "icons": [
     {
       "src": "favicon.ico",
