@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {
   majorScale,
+  Heading,
   Pane,
   Text,
 } from 'evergreen-ui';
@@ -18,6 +19,7 @@ class Notes extends Component {
 
   render() { 
     const { note } = this.state;
+    const { wine, winery, vintage } = this.props;
 
     return (
       <Pane
@@ -26,9 +28,10 @@ class Notes extends Component {
         padding={majorScale(2)}
         flexWrap="wrap"
       >
-        <Text>
-          {note}
-        </Text>
+        <Heading>
+          {winery} - {wine} ({vintage})
+        </Heading>
+        <Text dangerouslySetInnerHTML={{ __html: note }} />
       </Pane>
     );
   }

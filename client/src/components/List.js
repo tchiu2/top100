@@ -6,12 +6,14 @@ import {
   Position,
   Table,
 } from 'evergreen-ui';
+import _ from 'lodash';
 
 import Notes from './Notes';
 
 class List extends Component {
   state = {
     wines: [],
+    shown: null,
   };
 
   componentDidMount() {
@@ -22,6 +24,21 @@ class List extends Component {
     fetch('/api/wines')
       .then(res => res.json())
       .then(wines => this.setState({ wines }));
+  };
+
+  debouncedMouseOver = _.debounce((e, id) => {
+    this.setState({ shown: id });
+  }, 300);
+
+  handleMouseOver = id => e => {
+    e.persist();
+    this.debouncedMouseOver(e, id);
+  };
+
+  handleMouseLeave = id => e => {
+    if (id !== this.state.shown) {
+      this.setState({ shown: null });
+    }
   };
 
   render() {
@@ -39,17 +56,24 @@ class List extends Component {
     );
     const rows = this.state.wines.map(wine => (
       <Popover
+        isShown={wine.id === this.state.shown}
         key={wine.id}
         trigger="hover"
         position={Position.BOTTOM}
-        content={() => <Notes id={wine.id} />}
+        content={() => (
+          <Notes
+            id={wine.id}
+            winery={wine.winery}
+            wine={wine.wine}
+            vintage={wine.vintage}
+          />
+        )}
       >
-        {({ isShown, toggle, getRef }) => (
         <Table.Row
-          onMouseOver={() => !isShown && toggle()}
-          onMouseLeave={() => isShown && toggle()}
+          data-id={wine.id}
           isSelectable
-          innerRef={ref => getRef(ref)}
+          onMouseOver={this.handleMouseOver(wine.id)}
+          onMouseLeave={this.handleMouseLeave(wine.id)}
         >
           <Table.TextCell>{wine.top100Rank}</Table.TextCell>
           <Table.TextCell>{wine.score}</Table.TextCell>
@@ -60,7 +84,6 @@ class List extends Component {
           <Table.TextCell>{wine.country}</Table.TextCell>
           <Table.TextCell>{wine.region}</Table.TextCell>
         </Table.Row>
-        )}
       </Popover>
     ));
 
