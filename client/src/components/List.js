@@ -2,8 +2,12 @@ import React, { Component } from 'react';
 import {
   majorScale,
   Pane,
+  Popover,
+  Position,
   Table,
 } from 'evergreen-ui';
+
+import Notes from './Notes';
 
 class List extends Component {
   state = {
@@ -34,16 +38,30 @@ class List extends Component {
       </Table.Head>
     );
     const rows = this.state.wines.map(wine => (
-      <Table.Row key={wine.id}>
-        <Table.TextCell>{wine.top100Rank}</Table.TextCell>
-        <Table.TextCell>{wine.score}</Table.TextCell>
-        <Table.TextCell>{wine.winery}</Table.TextCell>
-        <Table.TextCell>{wine.wine}</Table.TextCell>
-        <Table.TextCell>{wine.vintage}</Table.TextCell>
-        <Table.TextCell>{wine.color}</Table.TextCell>
-        <Table.TextCell>{wine.country}</Table.TextCell>
-        <Table.TextCell>{wine.region}</Table.TextCell>
-      </Table.Row>
+      <Popover
+        key={wine.id}
+        trigger="hover"
+        position={Position.BOTTOM}
+        content={() => <Notes id={wine.id} />}
+      >
+        {({ isShown, toggle, getRef }) => (
+        <Table.Row
+          onMouseOver={() => !isShown && toggle()}
+          onMouseLeave={() => isShown && toggle()}
+          isSelectable
+          innerRef={ref => getRef(ref)}
+        >
+          <Table.TextCell>{wine.top100Rank}</Table.TextCell>
+          <Table.TextCell>{wine.score}</Table.TextCell>
+          <Table.TextCell>{wine.winery}</Table.TextCell>
+          <Table.TextCell>{wine.wine}</Table.TextCell>
+          <Table.TextCell>{wine.vintage}</Table.TextCell>
+          <Table.TextCell>{wine.color}</Table.TextCell>
+          <Table.TextCell>{wine.country}</Table.TextCell>
+          <Table.TextCell>{wine.region}</Table.TextCell>
+        </Table.Row>
+        )}
+      </Popover>
     ));
 
     return (
