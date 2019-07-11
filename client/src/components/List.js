@@ -4,9 +4,9 @@ import {
   Position,
   Table,
 } from 'evergreen-ui';
-import _ from 'lodash';
 
 import Notes from './Notes';
+import { debounce, throttle } from '../utils';
 
 const cellSizes = {
   small: 1,
@@ -51,11 +51,12 @@ class List extends Component {
       .then(wines => this.setState({ wines }));
   };
 
-  debouncedMouseOver = _.debounce((e, id) => {
+  debouncedMouseOver = debounce((e, id) => {
     this.setState({ shown: id });
   }, 250);
 
-  throttledScroll = _.throttle(() => {
+  throttledScroll = throttle(() => {
+    console.log("scroll")
     this.setState({ shown: null });
   }, 240);
 
