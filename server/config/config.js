@@ -14,10 +14,10 @@ module.exports = {
     "dialect": "postgres"
   },
   "production": {
-    "username": process.env.DATABASE_USER,
-    "password": process.env.DATABASE_PASSWORD,
-    "database": "top100_production",
-    "host": "127.0.0.1",
-    "dialect": "postgres"
+    "use_env_variable": "DATABASE_URL",
+    "dialect": "postgres",
+    "dialectOptions": {
+      "ssl": true
+    }
   }
 };
