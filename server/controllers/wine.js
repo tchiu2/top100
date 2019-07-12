@@ -5,7 +5,7 @@ const list = (req, res) =>
   wine.findAll({
     attributes: [
       'id',
-      'top100Rank',
+      ['top100Rank', 'rank'],
       'score',
       'winery',
       'wine',

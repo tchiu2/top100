@@ -15,7 +15,7 @@ const Attribution = () =>
     color="muted"
     textAlign="center"
     justifySelf="center"
-    marginTop={majorScale(1)}
+    marginTop={majorScale(2)}
   >
     Data and logo are property of Wine Spectator/M. Shanken Communciations.
   </Text>
@@ -34,7 +34,7 @@ const App = () => {
         size={900}
         textAlign="left"
         alignSelf="flex-start"
-        marginBottom={majorScale(1)}
+        marginBottom={majorScale(2)}
       >
         Wine Spectator's Top 100
       </Heading>

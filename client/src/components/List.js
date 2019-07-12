@@ -8,32 +8,35 @@ import {
 import Notes from './Notes';
 import { debounce, throttle } from '../utils';
 
-const cellSizes = {
+const CELL_SIZES = {
   small: 1,
   medium: 3,
   large: 6,
 };
 
-const TableCell = (isHeader, size, textAlign = 'center') => ({ children, ... props }) => {
+const COLUMNS = [
+  { name: 'rank', size: 'small' },
+  { name: 'winery', size: 'medium', align: 'left' },
+  { name: 'wine', size: 'large', align: 'left' },
+  { name: 'vintage', size: 'small' },
+  { name: 'score', size: 'small' },
+  { name: 'color', size: 'small' },
+  { name: 'country', size: 'medium', align: 'left' },
+  { name: 'region', size: 'medium', align: 'left' },
+];
+
+const tableCell = (isHeader, name, size, textAlign = 'center') => {
   const Cell = isHeader ? Table.TextHeaderCell : Table.TextCell;
 
   return (
     <Cell
-      flex={size}
+      flex={CELL_SIZES[size]}
       textAlign={textAlign}
-      {...props}
     >
-      {children}
+      {isHeader ? name[0].toUpperCase() + name.slice(1) : name}
     </Cell>
   );
 };
-
-const SmallHeaderCell = TableCell(true, cellSizes.small);
-const MediumHeaderCell = TableCell(true, cellSizes.medium, 'left');
-const LargeHeaderCell = TableCell(true, cellSizes.large, 'left');
-const SmallBodyCell = TableCell(false, cellSizes.small);
-const MediumBodyCell = TableCell(false, cellSizes.medium, 'left');
-const LargeBodyCell = TableCell(false, cellSizes.large, 'left');
 
 class List extends Component {
   state = {
@@ -56,7 +59,6 @@ class List extends Component {
   }, 250);
 
   throttledScroll = throttle(() => {
-    console.log("scroll")
     this.setState({ shown: null });
   }, 250);
 
@@ -74,14 +76,7 @@ class List extends Component {
 
   renderHeaders = () =>
     <Table.Head>
-      <SmallHeaderCell>Rank</SmallHeaderCell>
-      <MediumHeaderCell>Winery</MediumHeaderCell>
-      <LargeHeaderCell>Wine</LargeHeaderCell>
-      <SmallHeaderCell>Vintage</SmallHeaderCell>
-      <SmallHeaderCell>Score</SmallHeaderCell>
-      <SmallHeaderCell>Color</SmallHeaderCell>
-      <MediumHeaderCell>Country</MediumHeaderCell>
-      <MediumHeaderCell>Region</MediumHeaderCell>
+      {COLUMNS.map(({ name, size, align }) => tableCell(true, name, size, align))}
     </Table.Head>
 
   renderTableRows = () => this.state.wines.map(wine => (
@@ -98,14 +93,7 @@ class List extends Component {
         onMouseOver={this.handleMouseOver(wine.id)}
         onMouseLeave={this.handleMouseLeave}
       >
-        <SmallBodyCell>{wine.top100Rank}</SmallBodyCell>
-        <MediumBodyCell>{wine.winery}</MediumBodyCell>
-        <LargeBodyCell>{wine.wine}</LargeBodyCell>
-        <SmallBodyCell>{wine.vintage}</SmallBodyCell>
-        <SmallBodyCell>{wine.score}</SmallBodyCell>
-        <SmallBodyCell>{wine.color}</SmallBodyCell>
-        <MediumBodyCell>{wine.country}</MediumBodyCell>
-        <MediumBodyCell>{wine.region}</MediumBodyCell>
+        {COLUMNS.map(({ name, size, align }) => tableCell(false, wine[name], size, align))}
       </Table.Row>
     </Popover>
   ));
