@@ -1,5 +1,7 @@
 # Wine Spectator's Top 100
 
+[Live](https://ws-top-100.herokuapp.com/)
+
 ### Instructions
 To run locally:
 1. Install packages by running ```npm install``` in the root.
